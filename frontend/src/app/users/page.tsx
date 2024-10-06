@@ -2,13 +2,16 @@
 import { PencilIcon, XMarkIcon } from '@heroicons/react/16/solid'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { deleteUser, getAllUser } from '../api'
-type User = {
-  id: number
-  username: string
-  phone: string
-}
+import { deleteUser, getAllUser } from '../api/user'
+import { Profile, User } from '../types/type'
+import { useDispatch } from 'react-redux'
+import {
+  setSelectedUser,
+  setSelectedProfileUser,
+} from '../lib/features/user/userSlice'
+
 export default function Page() {
+  const dispatch = useDispatch()
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
 
   const router = useRouter()
@@ -24,24 +27,24 @@ export default function Page() {
 
   const allUsers = useMemo(() => users, [users])
   const handleViewProfile = useCallback(
-    (userId: number) => {
-      router.push(`/users/profile/${userId}`)
+    (userProfile: Profile) => {
+      console.log(userProfile)
+      dispatch(setSelectedProfileUser(userProfile))
+      router.push(`/users/profile`)
     },
-    [router],
+    [dispatch, router],
   )
 
   const handleCreateUser = useCallback(() => {
     router.push('/users/create')
   }, [router])
-  // const handleEditUser = useCallback(
-  //   (user: User) => {
-  //     router.push({
-  //       pathname: `/users/edit/${user.id}`,
-  //       query: { username: user.username, phone: user.phone },
-  //     })
-  //   },
-  //   [router],
-  // )
+  const handleEditUser = useCallback(
+    (user: User) => {
+      dispatch(setSelectedUser(user)) // Set user in the global state
+      router.push(`/users/edit`) // Navigate to the edit page
+    },
+    [dispatch, router],
+  )
 
   return (
     <div>
@@ -81,7 +84,7 @@ export default function Page() {
                   <PencilIcon
                     height={20}
                     width={20}
-                    // onClick={() => handleEditUser(user)}
+                    onClick={() => handleEditUser(user)}
                   />
                 </td>
                 <td>
@@ -109,7 +112,7 @@ export default function Page() {
                 <td>
                   <button
                     className='text-blue-400'
-                    onClick={() => handleViewProfile(user.id)}
+                    onClick={() => handleViewProfile(user)}
                   >
                     View Profile
                   </button>

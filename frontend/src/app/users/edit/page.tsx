@@ -1,15 +1,18 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { updateUser } from '@/app/api'
+import { updateUser } from '@/app/api/user'
+import { User } from '@/app/types/type'
+import { useAppSelector } from '@/app/lib/hook'
 
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
+// Yup schema validation
 const schema = yup
   .object({
     username: yup.string().required().min(4),
@@ -23,30 +26,28 @@ const schema = yup
 
 function Page() {
   const router = useRouter()
-  const searchParams = useSearchParams() // Use useSearchParams to get query params
-
-  const id = searchParams.get('id') // Get user id from query parameters
-  const username = searchParams.get('username') // Get username from query parameters
-  const phone = searchParams.get('phone') // Get phone from query parameters
-
+  const user = useAppSelector(state => state.user.selectedUser)
   const {
     register,
     handleSubmit,
-    setValue, // to set the form fields
+    setValue, // to set the form fields with default values
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
 
   // Set the values in the form when the page loads
   useEffect(() => {
-    if (username && phone) {
-      setValue('username', username)
-      setValue('phone', phone)
+    if (user) {
+      setValue('username', user.username)
+      setValue('phone', user.phone)
     }
-  }, [username, phone, setValue])
+  }, [user, setValue])
 
-  const onSubmit = async (data: { username: string; phone: string }) => {
-    await updateUser(id, data) // Update the user data
-    router.push('/users') // Redirect to users list after updating
+  // Handle form submission
+  const onSubmit = async (data: User) => {
+    if (user) {
+      await updateUser(user.id, data) // Update the user data
+      router.push('/users') // Redirect to users list after updating
+    }
   }
 
   return (
@@ -62,6 +63,7 @@ function Page() {
               <input
                 className='border border-black rounded-md'
                 {...register('username', { required: 'Username is required' })}
+                defaultValue={user?.username} // Default value for the username field
               />
             </div>
             <div>{errors.username && <p>{errors.username.message}</p>}</div>
@@ -75,6 +77,7 @@ function Page() {
                   required: 'Phone number is required',
                   minLength: 10,
                 })}
+                defaultValue={user?.phone} // Default value for the phone field
               />
             </div>
             <div>{errors.phone && <p>{errors.phone.message}</p>}</div>

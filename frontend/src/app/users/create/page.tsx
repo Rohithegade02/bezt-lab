@@ -3,7 +3,8 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { createUser } from '@/app/api'
+import { createUser } from '@/app/api/user'
+import { User } from '@/app/types/type'
 
 // type FormData = {
 //   username: string
@@ -30,7 +31,7 @@ function Page() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
 
-  const onSubmit = async (data: { username: string; phone: string }) => {
+  const onSubmit = async (data: User) => {
     await createUser(data) // create a new user
   }
   return (

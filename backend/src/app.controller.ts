@@ -1,6 +1,6 @@
 import { UserService } from './user.service';
 import { ProfileService } from './profile.service';
-import { User as UserModel, Profile as ProfileModel } from '@prisma/client';
+import { User as UserModel, Profile as ProfileModel, Gender } from '@prisma/client';
 import {
   Body,
   Controller,
@@ -79,7 +79,7 @@ export class AppController {
       username: string;
       phone: string;
       email: string;
-      gender: string;
+      gender: Gender;
       address: string;
       pincode: string;
       city: string;
@@ -119,7 +119,7 @@ export class AppController {
       username: string;
       phone: string;
       email: string;
-      gender: string;
+      gender: Gender;
       address: string;
       pincode: string;
       city: string;

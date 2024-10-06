@@ -1,7 +1,9 @@
+import { User } from '../types/type'
+
 const BASE_URL = 'http://localhost:3001'
 
 //To create a new user api
-export const createUser = async (data: { username: string; phone: string }) => {
+export const createUser = async (data: User) => {
   try {
     const response = await fetch(`${BASE_URL}/api/user`, {
       method: 'POST',
