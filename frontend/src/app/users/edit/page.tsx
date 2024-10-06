@@ -27,6 +27,7 @@ const schema = yup
 function Page() {
   const router = useRouter()
   const user = useAppSelector(state => state.user.selectedUser)
+  console.log(user)
   const {
     register,
     handleSubmit,
@@ -44,8 +45,10 @@ function Page() {
 
   // Handle form submission
   const onSubmit = async (data: User) => {
+    const { id, profiles, ...userData } = data
+    console.log(userData)
     if (user) {
-      await updateUser(user.id, data) // Update the user data
+      await updateUser(user.id, userData) // Update the user data
       router.push('/users') // Redirect to users list after updating
     }
   }

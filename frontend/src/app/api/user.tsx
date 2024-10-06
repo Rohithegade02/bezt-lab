@@ -57,7 +57,7 @@ export const updateUser = async (
 ) => {
   try {
     const response = await fetch(`${BASE_URL}/api/user/${userId}`, {
-      method: 'DELETE',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },

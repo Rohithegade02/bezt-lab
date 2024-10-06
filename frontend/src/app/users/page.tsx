@@ -47,7 +47,7 @@ export default function Page() {
   )
 
   return (
-    <div>
+    <React.Fragment>
       <div className='flex gap-5 p-10 items-center'>
         <div>
           <p>Users</p>
@@ -61,68 +61,74 @@ export default function Page() {
           </button>
         </div>
       </div>
-
-      {/* Table */}
-      <div className='p-10'>
-        <table className='min-w-full table-auto border-collapse border border-gray-200'>
-          <thead>
+      <div className='p-10 rounded-lg'>
+        <table className='min-w-full table-auto border-collapse border border-gray-200 rounded-lg'>
+          <thead className='rounded-lg'>
             <tr>
-              <th className='border border-gray-300 px-4 py-2'>Username</th>
-              <th className='border border-gray-300 px-4 py-2'>Phone</th>
+              <th className='border border-gray-300 text-white px-4 py-2'>
+                Username
+              </th>
+              <th className='border border-gray-300 text-white px-4 py-2'>
+                Phone
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className=''>
             {allUsers.map(user => (
               <tr key={user.id}>
-                <td className='border border-gray-300 px-4 py-2'>
+                <td className='border text-white border-gray-300 px-4 py-2'>
                   {user.username}
                 </td>
-                <td className='border border-gray-300 px-4 py-2'>
+                <td className='border text-white border-gray-300 px-4 py-2'>
                   {user.phone}
                 </td>
-                <td>
-                  <PencilIcon
-                    height={20}
-                    width={20}
-                    onClick={() => handleEditUser(user)}
-                  />
-                </td>
-                <td>
-                  <XMarkIcon
-                    height={20}
-                    width={20}
-                    onClick={() => setShowDeleteModal(!showDeleteModal)}
-                  />
-                </td>
-                {showDeleteModal && (
-                  <div className='fixed inset-0 z-10 flex items-center justify-center'>
-                    <div
-                      className='absolute inset-0 bg-black opacity-50'
-                      onClick={() => setShowDeleteModal(false)}
-                    ></div>
-                    {/* Modal */}
-                    <div className='relative shadow-lg z-20'>
-                      <DeleteModal
-                        setShowDeleteModal={setShowDeleteModal}
-                        userId={user.id}
-                      />
-                    </div>{' '}
-                  </div>
-                )}
-                <td>
-                  <button
-                    className='text-blue-400'
-                    onClick={() => handleViewProfile(user)}
-                  >
-                    View Profile
-                  </button>
-                </td>
+                <div className='flex gap-5 items-center py-2 border-gray-300 border-b'>
+                  <td className=''>
+                    <PencilIcon
+                      height={20}
+                      width={20}
+                      onClick={() => handleEditUser(user)}
+                      className='mx-2 text-white'
+                    />
+                  </td>
+                  <td>
+                    <XMarkIcon
+                      height={20}
+                      width={20}
+                      onClick={() => setShowDeleteModal(!showDeleteModal)}
+                      className='text-white border-2 border-white rounded-full'
+                    />
+                  </td>
+                  {showDeleteModal && (
+                    <div className='fixed inset-0 z-10 flex items-center justify-center'>
+                      <div
+                        className='absolute inset-0 bg-black opacity-50'
+                        onClick={() => setShowDeleteModal(false)}
+                      ></div>
+                      {/* Modal */}
+                      <div className='relative shadow-lg z-20'>
+                        <DeleteModal
+                          setShowDeleteModal={setShowDeleteModal}
+                          userId={user.id}
+                        />
+                      </div>{' '}
+                    </div>
+                  )}
+                  <td>
+                    <button
+                      className='text-blue-400'
+                      onClick={() => handleViewProfile(user)}
+                    >
+                      View Profile
+                    </button>
+                  </td>
+                </div>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </div>
+    </React.Fragment>
   )
 }
 
@@ -131,7 +137,7 @@ const DeleteModal = ({
   userId,
 }: {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>
-  userId: number
+  userId: number | undefined
 }) => {
   const deleteUserFunction = useCallback(async (userId: number) => {
     await deleteUser(userId)

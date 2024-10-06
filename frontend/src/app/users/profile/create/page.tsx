@@ -44,7 +44,7 @@ function Page() {
   return (
     <div className='flex w-full p-5 flex-col items-center justify-center h-screen'>
       <div>
-        <h1 className='font-semibold text-2xl'>Users Create / Edit</h1>
+        <h1 className='font-semibold text-2xl'>Users Create</h1>
       </div>
       <div>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>

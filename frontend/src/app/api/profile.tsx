@@ -1,4 +1,4 @@
-import { Profile } from '../types/type'
+import { Profile, User } from '../types/type'
 
 const BASE_URL = 'http://localhost:3001'
 
@@ -34,39 +34,39 @@ export const getAllProfileUser = async () => {
     console.error('Error:', error)
   }
 }
-// ///delete a user
-// export const deleteUser = async (userId: number) => {
-//   try {
-//     const response = await fetch(`${BASE_URL}/api/user/${userId}`, {
-//       method: 'DELETE',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     })
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! status: ${response.status}`)
-//     }
-//   } catch (error) {
-//     console.error('Error:', error)
-//   }
-// }
+// ///delete a profile user
+export const deleteProfileUser = async (userId: number) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/user/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+  } catch (error) {
+    console.error('Error:', error)
+  }
+}
 
-// export const updateUser = async (
-//   userId: number,
-//   data: { username: string; phone: string },
-// ) => {
-//   try {
-//     const response = await fetch(`${BASE_URL}/api/user/${userId}`, {
-//       method: 'DELETE',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(data),
-//     })
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! status: ${response.status}`)
-//     }
-//   } catch (error) {
-//     console.error('Error:', error)
-//   }
-// }
+export const updateProfileUser = async (
+  userId: number,
+  data: User & Profile,
+) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/user-profile/${userId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+  } catch (error) {
+    console.error('Error:', error)
+  }
+}

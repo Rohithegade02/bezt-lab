@@ -3,6 +3,7 @@ import { PencilIcon, XMarkIcon } from '@heroicons/react/16/solid'
 import React, { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAppSelector } from '@/app/lib/hook'
+import { deleteProfileUser } from '@/app/api/profile'
 
 function UserProfile() {
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
@@ -15,15 +16,17 @@ function UserProfile() {
     router.push(`/users/profile/create`)
   }, [router])
 
+  const handleEditProfile = useCallback(() => {
+    router.push(`/users/profile/edit`)
+  }, [router])
   if (!userProfile) {
     return <p>No profile selected.</p>
   }
 
   return (
     <div className='max-w-xl mx-auto my-auto shadow-lg rounded-lg border p-10 border-gray-300'>
-      {/* Header Section */}
       <div className='flex gap-5 items-center mb-4'>
-        <h1 className='text-lg font-semibold'>Profile</h1>
+        <h1 className='text-lg font-semibold text-white'>Profile</h1>
         <div className='space-x-2'>
           <button
             className='py-1 px-3 bg-blue-400 text-white rounded-md'
@@ -32,7 +35,12 @@ function UserProfile() {
             Create Profile
           </button>
           <button className='text-gray-500'>
-            <PencilIcon width={20} height={20} />
+            <PencilIcon
+              width={20}
+              height={20}
+              className='text-white'
+              onClick={() => handleEditProfile()}
+            />
           </button>
           <button
             className='text-gray-500'
@@ -51,9 +59,39 @@ function UserProfile() {
         </div>
         <div className='flex'>
           <span className='flex-1 font-semibold'>Email:</span>
-          <span className='flex-1'>{userProfile.email}</span>
+          <span className='flex-1'>{userProfile.profiles[0].email}</span>
         </div>
-        {/* Add other fields like gender, address, etc. */}
+        <div className='flex'>
+          <span className='flex-1 font-semibold'>Gender:</span>
+          <span className='flex-1'>
+            {userProfile.profiles[0].gender &&
+            userProfile.profiles[0].gender === 'MALE'
+              ? 'Male'
+              : userProfile.profiles[0].gender === 'FEMALE'
+              ? 'Female'
+              : 'Other'}
+          </span>
+        </div>
+        <div className='flex'>
+          <span className='flex-1 font-semibold'>Address:</span>
+          <span className='flex-1'>{userProfile.profiles[0].address}</span>
+        </div>
+        <div className='flex'>
+          <span className='flex-1 font-semibold'>Pincode:</span>
+          <span className='flex-1'>{userProfile.profiles[0].pincode}</span>
+        </div>
+        <div className='flex'>
+          <span className='flex-1 font-semibold'>City:</span>
+          <span className='flex-1'>{userProfile.profiles[0].city}</span>
+        </div>
+        <div className='flex'>
+          <span className='flex-1 font-semibold'>State:</span>
+          <span className='flex-1'>{userProfile.profiles[0].state}</span>
+        </div>
+        <div className='flex'>
+          <span className='flex-1 font-semibold'>Country:</span>
+          <span className='flex-1'>{userProfile.profiles[0].country}</span>
+        </div>
       </div>
 
       {showDeleteModal && (
@@ -63,7 +101,10 @@ function UserProfile() {
             onClick={() => setShowDeleteModal(false)}
           ></div>
           <div className='relative shadow-lg z-20'>
-            <DeleteModal setShowDeleteModal={setShowDeleteModal} />
+            <DeleteModal
+              setShowDeleteModal={setShowDeleteModal}
+              userProfileId={userProfile.id}
+            />
           </div>
         </div>
       )}
@@ -73,9 +114,14 @@ function UserProfile() {
 
 const DeleteModal = ({
   setShowDeleteModal,
+  userProfileId,
 }: {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>
+  userProfileId: number
 }) => {
+  const deleteUserFunction = useCallback(async (userProfileId: number) => {
+    await deleteProfileUser(userProfileId)
+  }, [])
   return (
     <div className='flex flex-col w-96 h-40 items-center justify-center gap-2 bg-yellow-200 rounded-2xl border-2 border-gray-400'>
       <div>
@@ -88,7 +134,10 @@ const DeleteModal = ({
         >
           No
         </button>
-        <button className='text-gray-500 border border-gray-500 bg-red-300 px-5 py-2 rounded-md'>
+        <button
+          className='text-gray-500 border border-gray-500 bg-red-300 px-5 py-2 rounded-md'
+          onClick={() => deleteUserFunction(userProfileId)}
+        >
           Yes
         </button>
       </div>

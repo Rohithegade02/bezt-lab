@@ -1,6 +1,10 @@
 import { UserService } from './user.service';
 import { ProfileService } from './profile.service';
-import { User as UserModel, Profile as ProfileModel, Gender } from '@prisma/client';
+import {
+  User as UserModel,
+  Profile as ProfileModel,
+  Gender,
+} from '@prisma/client';
 import {
   Body,
   Controller,
@@ -130,14 +134,10 @@ export class AppController {
     const userId = parseInt(id, 10);
 
     // Update the User model
-    const user = await this.userService.updateUser(userId, {
-      username: data.username,
-      phone: data.phone,
-    });
 
     // Update the Profile model
     const profile = await this.profileService.updateProfile({
-      where: { userId: userId },
+      where: { userId },
       data: {
         email: data.email,
         gender: data.gender,
@@ -147,6 +147,10 @@ export class AppController {
         state: data.state,
         country: data.country,
       },
+    });
+    const user = await this.userService.updateUser(userId, {
+      username: data.username,
+      phone: data.phone,
     });
 
     return { user, profile };
