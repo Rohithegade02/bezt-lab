@@ -5,7 +5,6 @@ import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { updateUser } from '@/app/api/user'
 import { GenderEnum, User } from '@/app/types/type'
 import { useAppSelector } from '@/app/lib/hook'
 import { updateProfileUser } from '@/app/api/profile'
@@ -72,111 +71,186 @@ function Page() {
   }
 
   return (
-    <div className='flex w-full p-5 flex-col items-center justify-center h-screen'>
-      <div>
-        <h1 className='font-semibold text-2xl'>Edit Profile User</h1>
-      </div>
-      <div>
+    <div className='flex items-center justify-center h-screen'>
+      <div className='flex gap-5 lg:w-[30%] w-[90%] bg-white p-8 flex-col  rounded-lg '>
+        <div>
+          <h1 className='font-semibold text-2xl'>Edit Profile User</h1>
+        </div>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
           {/* Username */}
           <div className='flex flex-col'>
-            <label>UserName</label>
-            <input
-              className='border border-black rounded-md'
-              {...register('username')}
-            />
-            <div>{errors.username && <p>{errors.username.message}</p>}</div>
+            <div className='flex w-[80%]'>
+              <div className='basis-[40%]'>
+                <label>Username:</label>
+              </div>
+              <div className='basis-[100%]'>
+                <input
+                  className='w-full border border-black rounded-md'
+                  {...register('username', {
+                    required: 'Username is required',
+                  })}
+                />
+              </div>
+            </div>
+            <div>
+              {errors.username && (
+                <p className='text-red-400 text-sm'>
+                  {errors.username.message}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Phone */}
           <div className='flex flex-col'>
-            <label>Phone</label>
-            <input
-              className='border border-black rounded-md'
-              {...register('phone')}
-            />
-            <div>{errors.phone && <p>{errors.phone.message}</p>}</div>
+            <div className='flex w-[80%]'>
+              <div className='basis-[40%]'>
+                <label>Phone:</label>
+              </div>
+              <div className='basis-[100%]'>
+                <input
+                  className='w-full border border-black rounded-md'
+                  {...register('phone', {
+                    required: 'Phone number is required',
+                    minLength: {
+                      value: 10,
+                      message: 'Phone number must be at least 10 digits',
+                    },
+                  })}
+                />
+              </div>
+            </div>
+            <div>
+              {errors.phone && (
+                <p className='text-red-400 text-sm'>{errors.phone.message}</p>
+              )}
+            </div>
           </div>
-
-          {/* Gender */}
-          <div className='flex flex-col'>
-            <label>Gender</label>
-            <select
-              className='border border-black rounded-md'
-              {...register('gender')}
-            >
-              <option value=''>Select Gender</option>
-              {Object.values(GenderEnum).map(gender => (
-                <option key={gender} value={gender}>
-                  {gender}
-                </option>
-              ))}
-            </select>
-            <div>{errors.gender && <p>{errors.gender.message}</p>}</div>
-          </div>
-
           {/* Email */}
           <div className='flex flex-col'>
-            <label>Email</label>
-            <input
-              className='border border-black rounded-md'
-              type='email'
-              {...register('email')}
-            />
-            <div>{errors.email && <p>{errors.email.message}</p>}</div>
+            <div className='flex w-[80%]'>
+              <div className='basis-[40%]'>
+                <label>Email:</label>
+              </div>
+              <div className='basis-[100%]'>
+                <input
+                  className='w-full border border-black rounded-md'
+                  {...register('email', {
+                    required: 'Email is required',
+                  })}
+                />
+              </div>
+            </div>
+            <div>
+              {errors.email && (
+                <p className='text-red-400 text-sm'>{errors.email.message}</p>
+              )}
+            </div>
+          </div>
+          {/* Gender */}
+          <div className='flex flex-col'>
+            <div className='flex w-[80%]'>
+              <div className='basis-[40%]'>
+                <label>Gender:</label>
+              </div>
+              <div className='basis-[100%]'>
+                <select
+                  className='border w-full border-black rounded-md'
+                  {...register('gender', { required: 'Gender is required' })}
+                >
+                  <option value=''>Select Gender</option>
+                  {Object.values(GenderEnum).map(gender => (
+                    <option key={gender} value={gender}>
+                      {gender}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div>{errors.gender && <p>{errors.gender.message}</p>}</div>
           </div>
 
           {/* Address */}
           <div className='flex flex-col'>
-            <label>Address</label>
-            <input
-              className='border border-black rounded-md'
-              {...register('address')}
-            />
-            <div>{errors.address && <p>{errors.address.message}</p>}</div>
+            <div className='flex w-[80%]'>
+              <div className='basis-[40%]'>
+                <label>Pincode:</label>
+              </div>
+              <div className='basis-[100%]'>
+                <input
+                  className='w-full border border-black rounded-md'
+                  {...register('pincode', { required: 'Pincode is required' })}
+                />
+              </div>
+            </div>
+            <div>
+              {errors.pincode && (
+                <p className='text-red-400 text-sm'>{errors.pincode.message}</p>
+              )}
+            </div>
           </div>
 
           {/* Pincode */}
           <div className='flex flex-col'>
-            <label>Pincode</label>
-            <input
-              className='border border-black rounded-md'
-              {...register('pincode')}
-            />
-            <div>{errors.pincode && <p>{errors.pincode.message}</p>}</div>
+            <div className='flex w-[80%]'>
+              <div className='basis-[40%]'>
+                <label>City:</label>
+              </div>
+              <div className='basis-[100%]'>
+                <input
+                  className='w-full border border-black rounded-md'
+                  {...register('city', { required: 'City is required' })}
+                />
+              </div>
+            </div>
+            <div>
+              {errors.city && (
+                <p className='text-red-400 text-sm'>{errors.city.message}</p>
+              )}
+            </div>
           </div>
 
           {/* City */}
           <div className='flex flex-col'>
-            <label>City</label>
-            <input
-              className='border border-black rounded-md'
-              {...register('city')}
-            />
-            <div>{errors.city && <p>{errors.city.message}</p>}</div>
-          </div>
-
-          {/* State */}
-          <div className='flex flex-col'>
-            <label>State</label>
-            <input
-              className='border border-black rounded-md'
-              {...register('state')}
-            />
-            <div>{errors.state && <p>{errors.state.message}</p>}</div>
+            <div className='flex w-[80%]'>
+              <div className='basis-[40%]'>
+                <label>State:</label>
+              </div>
+              <div className='basis-[100%]'>
+                <input
+                  className='w-full border border-black rounded-md'
+                  {...register('state', { required: 'State is required' })}
+                />
+              </div>
+            </div>
+            <div>
+              {errors.state && (
+                <p className='text-red-400 text-sm'>{errors.state.message}</p>
+              )}
+            </div>
           </div>
 
           {/* Country */}
           <div className='flex flex-col'>
-            <label>Country</label>
-            <input
-              className='border border-black rounded-md'
-              {...register('country')}
-            />
-            <div>{errors.country && <p>{errors.country.message}</p>}</div>
+            <div className='flex w-[80%]'>
+              <div className='basis-[40%]'>
+                <label>Country:</label>
+              </div>
+              <div className='basis-[100%]'>
+                <input
+                  className='w-full border border-black rounded-md'
+                  {...register('country', { required: 'Country is required' })}
+                />
+              </div>
+            </div>
+            <div>
+              {errors.country && (
+                <p className='text-red-400 text-sm'>{errors.country.message}</p>
+              )}
+            </div>
           </div>
 
-          <div className='w-60 flex justify-between'>
+          <div className=' flex items-end justify-evenly px-8 '>
             <button
               type='reset'
               className='py-2 px-4 bg-white border rounded-md border-gray-400 text-gray-700'

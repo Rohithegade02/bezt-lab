@@ -61,8 +61,8 @@ export default function Page() {
           </button>
         </div>
       </div>
-      <div className='p-10 rounded-lg'>
-        <table className='min-w-full table-auto border-collapse border border-gray-200 rounded-lg'>
+      <div className='p-10 flex items-center justify-center rounded-lg'>
+        <table className='w-[70%] table-auto border-collapse border border-gray-200 rounded-lg'>
           <thead className='rounded-lg'>
             <tr>
               <th className='border border-gray-300 text-white px-4 py-2'>
@@ -88,7 +88,7 @@ export default function Page() {
                       height={20}
                       width={20}
                       onClick={() => handleEditUser(user)}
-                      className='mx-2 text-white'
+                      className='mx-2 text-white cursor-pointer'
                     />
                   </td>
                   <td>
@@ -96,13 +96,13 @@ export default function Page() {
                       height={20}
                       width={20}
                       onClick={() => setShowDeleteModal(!showDeleteModal)}
-                      className='text-white border-2 border-white rounded-full'
+                      className='text-white border-2 cursor-pointer border-white rounded-full'
                     />
                   </td>
                   {showDeleteModal && (
                     <div className='fixed inset-0 z-10 flex items-center justify-center'>
                       <div
-                        className='absolute inset-0 bg-black opacity-50'
+                        className='absolute inset-0 bg-black opacity-40'
                         onClick={() => setShowDeleteModal(false)}
                       ></div>
                       {/* Modal */}
