@@ -13,8 +13,7 @@ import { schema } from '@/app/schema/user'
 function Page() {
   const router = useRouter()
   const user = useAppSelector(state => state.user.selectedUser)
-
-  const [initialUser, setInitialUser] = useState<User | null>(null) // Store initial user data
+  const [initialUser, setInitialUser] = useState<User | null>(null)
 
   const {
     register,
@@ -25,41 +24,36 @@ function Page() {
     resolver: yupResolver(schema),
   })
 
-  // Set the values in the form when the page loads
   useEffect(() => {
     if (user) {
       setValue('username', user.username)
       setValue('phone', user.phone)
-      setInitialUser(user) // Save the initial user data for comparison
+      setInitialUser(user)
     }
   }, [user, setValue])
 
   //PATCH API
   const onSubmit = async (data: User) => {
     if (initialUser) {
-      // Create an object with only updated fields
       const updatedData = Object.keys(data).reduce(
         (acc: Partial<User>, key: string) => {
           const typedKey = key as keyof User
 
-          // Check if the field value has changed and filter out unchanged fields
           if (data[typedKey] !== initialUser[typedKey]) {
             if (data[typedKey] !== undefined) {
-              // Ensure the value is not undefined
-              acc[typedKey] = data[typedKey] as User[keyof User] // Safely assign the value to acc
+              acc[typedKey] = data[typedKey] as User[keyof User]
             }
           }
 
           return acc
         },
         {} as Partial<User>,
-      ) // Use Partial<User> for optional fields
+      )
 
       if (Object.keys(updatedData).length > 0) {
-        // If there are updates, send a request to update the user data
         const res: Response | undefined = await updateUser(
           initialUser.id as number,
-          updatedData as User, // Cast updatedData to User
+          updatedData as User,
         )
         if (res?.ok) {
           toast.success('Successfully Updated!')

@@ -13,7 +13,7 @@ import { profileSchema } from '@/app/schema/profile'
 function Page() {
   const router = useRouter()
   const userProfile = useAppSelector(state => state.user.selectedProfileUser)
-  const [initialUser, setInitialUser] = useState<Profile | null>(null) // Store initial user data
+  const [initialUser, setInitialUser] = useState<Profile | null>(null)
 
   const {
     register,
@@ -22,7 +22,6 @@ function Page() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(profileSchema) })
 
-  // Set the values in the form when the page loads
   useEffect(() => {
     if (userProfile) {
       setValue('username', userProfile.username)
@@ -34,15 +33,14 @@ function Page() {
       setValue('city', userProfile.profiles[0].city)
       setValue('state', userProfile.profiles[0].state)
       setValue('country', userProfile.profiles[0].country)
-      setInitialUser(userProfile) // Save the initial user data for comparison
+      setInitialUser(userProfile)
     }
   }, [userProfile, setValue])
 
-  // Handle form submission
+  // UPDATE API
   const onSubmit = async (data: Profile & User) => {
     if (!initialUser) return
 
-    // Compare new data with initial data and extract only changed fields
     const updatedData: Profile & User = Object.keys(data).reduce((acc, key) => {
       if (data[key as keyof Profile] !== initialUser[key as keyof Profile]) {
         acc[key as keyof Profile] = data[key as keyof Profile]

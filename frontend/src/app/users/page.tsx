@@ -45,8 +45,8 @@ export default function Page() {
 
   const handleEditUser = useCallback(
     (user: User) => {
-      dispatch(setSelectedUser(user)) // Set user in the global state
-      router.push(`/users/edit`) // Navigate to the edit page
+      dispatch(setSelectedUser(user))
+      router.push(`/users/edit`)
     },
     [dispatch, router],
   )
@@ -104,7 +104,7 @@ export default function Page() {
                   <XMarkIcon
                     height={20}
                     width={20}
-                    onClick={() => handleDeleteUser(user.id as number)} // Set userId for deletion
+                    onClick={() => handleDeleteUser(user.id as number)}
                     className='text-white border-2 cursor-pointer border-white rounded-full'
                   />
                 </td>
@@ -150,7 +150,7 @@ const DeleteModal = ({
 }: {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>
   userId: number
-  fetchUsers: () => Promise<void> // Function to refetch users
+  fetchUsers: () => Promise<void>
 }) => {
   //DELETE API
   const deleteUserFunction = useCallback(

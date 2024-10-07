@@ -9,7 +9,6 @@ import toast, { Toaster } from 'react-hot-toast'
 function UserProfile() {
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const router = useRouter()
-
   // Fetch selected profile user from Redux store
   const userProfile = useAppSelector(state => state.user.selectedProfileUser)
 
@@ -136,6 +135,7 @@ const DeleteModal = ({
   userProfileId: number
 }) => {
   const router = useRouter()
+  //DELETE API
   const deleteUserFunction = useCallback(
     async (userProfileId: number) => {
       const res: Response | undefined = await deleteProfileUser(userProfileId)
