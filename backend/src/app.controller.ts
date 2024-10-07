@@ -15,6 +15,7 @@ import {
 
 @Controller()
 export class AppController {
+  getHello: any;
   constructor(
     private readonly userService: UserService,
     private readonly profileService: ProfileService,
@@ -144,7 +145,7 @@ export class AppController {
   }
 
   // Get all user profiles by user ID
-  @Get('/api/user-profile/:id')
+  @Get('/api/user/profile/:id')
   async getUserAndProfiles(
     @Param('id') id: string,
     @Res() res: Response,
@@ -221,7 +222,7 @@ export class AppController {
   }
 
   // Update user and profile details
-  @Patch('/api/user-profile/:id')
+  @Patch('/api/user/profile/:id')
   async updateUserAndProfile(
     @Param('id') id: string,
     @Body()

@@ -51,7 +51,7 @@ export const updateProfileUser = async (
   data: User & Profile,
 ) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/user-profile/${userId}`, {
+    const response = await fetch(`${BASE_URL}/api/user/profile/${userId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
