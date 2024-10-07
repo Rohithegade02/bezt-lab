@@ -57,7 +57,7 @@ export const updateUser = async (
 ) => {
   try {
     const response = await fetch(`${BASE_URL}/api/user/${userId}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },

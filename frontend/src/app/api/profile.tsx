@@ -57,7 +57,7 @@ export const updateProfileUser = async (
 ) => {
   try {
     const response = await fetch(`${BASE_URL}/api/user-profile/${userId}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },

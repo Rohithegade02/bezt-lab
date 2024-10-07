@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -27,35 +27,51 @@ const schema = yup
 function Page() {
   const router = useRouter()
   const user = useAppSelector(state => state.user.selectedUser)
-  console.log(user)
+
+  const [initialUser, setInitialUser] = useState<User | null>(null) // Store initial user data
+
   const {
     register,
     handleSubmit,
-    setValue, // to set the form fields with default values
+    setValue,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) })
+  } = useForm({
+    resolver: yupResolver(schema),
+  })
 
   // Set the values in the form when the page loads
   useEffect(() => {
     if (user) {
       setValue('username', user.username)
       setValue('phone', user.phone)
+      setInitialUser(user) // Save the initial user data for comparison
     }
   }, [user, setValue])
 
   // Handle form submission
   const onSubmit = async (data: User) => {
     const { id, profiles, ...userData } = data
-    console.log(userData)
-    if (user) {
-      await updateUser(user.id, userData) // Update the user data
-      router.push('/users') // Redirect to users list after updating
+
+    if (initialUser) {
+      // Create an object with only updated fields
+      const updatedData = Object.keys(userData).reduce((acc, key) => {
+        if (userData[key as keyof User] !== initialUser[key as keyof User]) {
+          acc[key as keyof User] = userData[key as keyof User]
+        }
+        return acc
+      }, {} as Partial<User>)
+
+      if (Object.keys(updatedData).length > 0) {
+        // If there are updates, send a request to update the user data
+        await updateUser(initialUser.id, updatedData)
+        router.push('/users') // Redirect to users list after updating
+      }
     }
   }
 
   return (
-    <div className='flex justify-center items-center h-screen '>
-      <div className='flex lg:w-[30%] w-[70%] py-5 flex-col gap-5 bg-white items-center rounded-lg justify-center h-60 '>
+    <div className='flex justify-center items-center h-screen'>
+      <div className='flex lg:w-[30%] w-[70%] py-5 flex-col gap-5 bg-white items-center rounded-lg justify-center h-60'>
         <div>
           <h1 className='font-semibold text-2xl'>Edit User</h1>
         </div>
@@ -69,10 +85,7 @@ function Page() {
                 <label>UserName</label>
                 <input
                   className='border border-black rounded-md'
-                  {...register('username', {
-                    required: 'Username is required',
-                  })}
-                  defaultValue={user?.username} // Default value for the username field
+                  {...register('username')}
                 />
               </div>
               <div>
@@ -88,11 +101,7 @@ function Page() {
                 <label>Phone</label>
                 <input
                   className='border border-black rounded-md'
-                  {...register('phone', {
-                    required: 'Phone number is required',
-                    minLength: 10,
-                  })}
-                  defaultValue={user?.phone} // Default value for the phone field
+                  {...register('phone')}
                 />
               </div>
               <div>

@@ -1,11 +1,11 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { GenderEnum, User } from '@/app/types/type'
+import { GenderEnum, Profile, User } from '@/app/types/type'
 import { useAppSelector } from '@/app/lib/hook'
 import { updateProfileUser } from '@/app/api/profile'
 
@@ -37,7 +37,8 @@ const schema = yup
 function Page() {
   const router = useRouter()
   const userProfile = useAppSelector(state => state.user.selectedProfileUser)
-  console.log(userProfile)
+  const [initialUser, setInitialUser] = useState<Profile | null>(null) // Store initial user data
+
   const {
     register,
     handleSubmit,
@@ -57,16 +58,34 @@ function Page() {
       setValue('city', userProfile.profiles[0].city)
       setValue('state', userProfile.profiles[0].state)
       setValue('country', userProfile.profiles[0].country)
+      setInitialUser(userProfile) // Save the initial user data for comparison
+      console.log(initialUser)
     }
   }, [userProfile, setValue])
 
   // Handle form submission
-  const onSubmit = async (data: User) => {
-    const { id, ...userData } = data
+  const onSubmit = async (data: Profile) => {
+    if (!initialUser) return
 
-    if (userProfile) {
-      await updateProfileUser(userProfile.id, userData) // Update the user data
-      router.push('/users') // Redirect to users list after updating
+    // Compare new data with initial data and extract only changed fields
+    const updatedData: Partial<Profile> = Object.keys(data).reduce(
+      (acc, key) => {
+        if (data[key as keyof Profile] !== initialUser[key as keyof Profile]) {
+          acc[key as keyof Profile] = data[key as keyof Profile]
+        }
+        return acc
+      },
+      {} as Partial<Profile>,
+    )
+
+    // Only send PATCH request if there are updated fields
+    if (Object.keys(updatedData).length > 0) {
+      try {
+        await updateProfileUser(initialUser.id, updatedData) // PATCH request with updated fields
+        router.push('/users') // Redirect after successful update
+      } catch (error) {
+        console.error('Failed to update user profile:', error)
+      }
     }
   }
 

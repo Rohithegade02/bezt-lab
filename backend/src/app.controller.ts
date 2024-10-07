@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ProfileService } from './profile.service';
 import {
@@ -11,10 +12,9 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
 } from '@nestjs/common';
-
 @Controller()
 export class AppController {
   constructor(
@@ -22,60 +22,82 @@ export class AppController {
     private readonly profileService: ProfileService,
   ) {}
 
-  // to create a user
+  // Create a user
   @Post('/api/user')
   async signupUser(
-    @Body()
-    userData: {
-      username: string;
-      phone: string;
-    },
+    @Body() userData: { username: string; phone: string },
   ): Promise<UserModel> {
     return this.userService.createUser(userData);
   }
 
-  //get all users
+  // Get all users
   @Get('/api/users')
   async getAllUsers(): Promise<UserModel[]> {
     return this.userService.getAllUsers();
   }
 
-  //get user by id
+  // Get user by id
   @Get('/api/user/:id')
   async getUserById(@Param('id') id: string): Promise<UserModel | null> {
     const userId = parseInt(id, 10);
 
-    return this.userService.getUserById(userId);
+    // Check if user exists
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    return user;
   }
 
-  //edit user
-  @Put('/api/user/:id')
+  // Edit user
+  @Patch('/api/user/:id')
   async updateUser(
     @Param('id') id: string,
-    @Body()
-    data: {
-      username: string;
-      phone: string;
-    },
+    @Body() data: { username: string; phone: string },
   ): Promise<UserModel | null> {
     const userId = parseInt(id, 10);
 
+    // Check if user exists
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
     return this.userService.updateUser(userId, data);
   }
-  //delete user
+
+  // Delete user
   @Delete('/api/user/:id')
   async deleteUser(@Param('id') id: string): Promise<UserModel | null> {
     const userId = parseInt(id, 10);
+
+    // Check if user exists
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
     return this.userService.deleteUser(userId);
   }
 
-  //get all user profiles
+  // Get all user profiles by user ID
   @Get('/api/user-profile/:id')
   async getUserAndProfiles(@Param('id') id: string): Promise<UserModel | null> {
-    const userId = parseInt(id, 10); // Convert the id to an integer
-    return this.userService.getUserWithProfiles(userId);
+    const userId = parseInt(id, 10);
+
+    // Check if user exists
+    const user = await this.userService.getUserWithProfiles(userId);
+    if (!user) {
+      throw new NotFoundException(
+        `User with ID ${userId} and profiles not found`,
+      );
+    }
+
+    return user;
   }
-  //post
+
+  // Create a user and profile
   @Post('/api/user/profile')
   async createUserAndProfile(
     @Body()
@@ -91,13 +113,11 @@ export class AppController {
       country: string;
     },
   ): Promise<{ user: UserModel; profile: ProfileModel }> {
-    // Step 1: Create the User
     const user = await this.userService.createUser({
       username: data.username,
       phone: data.phone,
     });
 
-    // Step 2: Create the Profile and link it to the created user
     const profile = await this.profileService.createProfile({
       email: data.email,
       gender: data.gender,
@@ -115,7 +135,7 @@ export class AppController {
   }
 
   // Update user and profile details
-  @Put('/api/user-profile/:id')
+  @Patch('/api/user-profile/:id')
   async updateUserAndProfile(
     @Param('id') id: string,
     @Body()
@@ -133,10 +153,26 @@ export class AppController {
   ): Promise<{ user: UserModel; profile: ProfileModel }> {
     const userId = parseInt(id, 10);
 
+    // Check if user exists
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    // // Check if profile exists
+    // const profile = await this.profileService.getProfileByUserId(userId);
+    // if (!profile) {
+    //   throw new NotFoundException(`Profile for user with ID ${userId} not found`);
+    // }
+
     // Update the User model
+    const updatedUser = await this.userService.updateUser(userId, {
+      username: data.username,
+      phone: data.phone,
+    });
 
     // Update the Profile model
-    const profile = await this.profileService.updateProfile({
+    const updatedProfile = await this.profileService.updateProfile({
       where: { userId },
       data: {
         email: data.email,
@@ -148,11 +184,7 @@ export class AppController {
         country: data.country,
       },
     });
-    const user = await this.userService.updateUser(userId, {
-      username: data.username,
-      phone: data.phone,
-    });
 
-    return { user, profile };
+    return { user: updatedUser, profile: updatedProfile };
   }
 }
