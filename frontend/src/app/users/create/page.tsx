@@ -15,10 +15,9 @@ function Page() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
   const router = useRouter()
-
+  //POST API
   const onSubmit = async (data: User) => {
     const res: Response | undefined = await createUser(data)
-    console.log(res)
     if (res?.ok) {
       toast.success('Successfully created!')
       setTimeout(() => {
@@ -87,7 +86,7 @@ function Page() {
                 type='submit'
                 className='py-2 px-4 bg-green-300 border rounded-md border-gray-400 text-gray-700'
               >
-                Submit
+                Save
               </button>
             </div>
           </form>

@@ -34,24 +34,32 @@ function Page() {
     }
   }, [user, setValue])
 
-  // Handle form submission
+  //PATCH API
   const onSubmit = async (data: User) => {
     if (initialUser) {
       // Create an object with only updated fields
-      const updatedData = Object.keys(data).reduce((acc, key) => {
-        const typedKey = key as keyof User // Explicitly cast key to keyof User
+      const updatedData = Object.keys(data).reduce(
+        (acc: Partial<User>, key: string) => {
+          const typedKey = key as keyof User
 
-        if (data[typedKey] !== initialUser[typedKey]) {
-          acc[typedKey] = data[typedKey] // Now acc[key] can be safely assigned
-        }
-        return acc
-      }, {} as User) // Use Partial<User> to allow for optional fields
+          // Check if the field value has changed and filter out unchanged fields
+          if (data[typedKey] !== initialUser[typedKey]) {
+            if (data[typedKey] !== undefined) {
+              // Ensure the value is not undefined
+              acc[typedKey] = data[typedKey] as User[keyof User] // Safely assign the value to acc
+            }
+          }
+
+          return acc
+        },
+        {} as Partial<User>,
+      ) // Use Partial<User> for optional fields
 
       if (Object.keys(updatedData).length > 0) {
         // If there are updates, send a request to update the user data
         const res: Response | undefined = await updateUser(
           initialUser.id as number,
-          updatedData,
+          updatedData as User, // Cast updatedData to User
         )
         if (res?.ok) {
           toast.success('Successfully Updated!')
@@ -117,7 +125,7 @@ function Page() {
                 type='submit'
                 className='py-2 px-4 bg-green-300 border rounded-md border-gray-400 text-gray-700'
               >
-                Submit
+                Save
               </button>
             </div>
           </form>

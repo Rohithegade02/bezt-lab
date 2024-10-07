@@ -32,7 +32,7 @@ export const getAllUser = async () => {
     console.error('Error:', error)
   }
 }
-///delete a user
+///delete a user api
 export const deleteUser = async (userId: number) => {
   try {
     const response = await fetch(`${BASE_URL}/api/user/${userId}`, {
@@ -46,7 +46,7 @@ export const deleteUser = async (userId: number) => {
     console.error('Error:', error)
   }
 }
-
+//update a user api
 export const updateUser = async (
   userId: number,
   data: { username: string; phone: string },

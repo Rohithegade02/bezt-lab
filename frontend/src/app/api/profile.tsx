@@ -17,7 +17,7 @@ export const createProfileUser = async (data: Profile) => {
     console.error('Error:', error)
   }
 }
-// to get all user api
+// to get all profile user api
 export const getAllProfileUser = async () => {
   try {
     const response = await fetch(`${BASE_URL}/api/users`, {
@@ -31,7 +31,7 @@ export const getAllProfileUser = async () => {
     console.error('Error:', error)
   }
 }
-// ///delete a profile user
+// delete a profile user api
 export const deleteProfileUser = async (userId: number) => {
   try {
     const response = await fetch(`${BASE_URL}/api/user/${userId}`, {
@@ -45,7 +45,7 @@ export const deleteProfileUser = async (userId: number) => {
     console.error('Error:', error)
   }
 }
-
+// update a profile user api
 export const updateProfileUser = async (
   userId: number,
   data: User & Profile,

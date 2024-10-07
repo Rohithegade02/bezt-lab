@@ -14,7 +14,7 @@ import toast, { Toaster } from 'react-hot-toast'
 export default function Page() {
   const dispatch = useDispatch()
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null) // Track selected user
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
 
   const router = useRouter()
   const [users, setUsers] = useState<Array<User>>([])
@@ -51,7 +51,6 @@ export default function Page() {
     [dispatch, router],
   )
 
-  // Open delete modal for a specific user
   const handleDeleteUser = useCallback((userId: number) => {
     setSelectedUserId(userId)
     setShowDeleteModal(true)
@@ -125,19 +124,16 @@ export default function Page() {
           </tbody>
         </table>
       </div>
-
-      {/* Modal only shown when a user is selected */}
       {showDeleteModal && selectedUserId !== null && (
         <div className='fixed inset-0 z-10 flex items-center justify-center'>
           <div
             className='absolute inset-0 bg-black opacity-50'
             onClick={() => setShowDeleteModal(false)}
           ></div>
-          {/* Modal */}
           <div className='relative shadow-lg z-20'>
             <DeleteModal
               setShowDeleteModal={setShowDeleteModal}
-              userId={selectedUserId} // Pass selected user ID to modal
+              userId={selectedUserId}
               fetchUsers={fetchUsers}
             />
           </div>
@@ -156,7 +152,7 @@ const DeleteModal = ({
   userId: number
   fetchUsers: () => Promise<void> // Function to refetch users
 }) => {
-  console.log(userId)
+  //DELETE API
   const deleteUserFunction = useCallback(
     async (userId: number) => {
       const res: Response | undefined = await deleteUser(userId)

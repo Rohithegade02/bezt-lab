@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { GenderEnum, Profile, User } from '@/app/types/type'
 import { useAppSelector } from '@/app/lib/hook'
@@ -51,13 +50,12 @@ function Page() {
       return acc
     }, {} as Profile & User)
 
-    // Only send PATCH request if there are updated fields
     if (Object.keys(updatedData).length > 0) {
       try {
         const res: Response | undefined = await updateProfileUser(
           initialUser.id as number,
           updatedData,
-        ) // PATCH request with updated fields
+        )
         if (res?.ok) {
           toast.success('Successfully Updated!')
           setTimeout(() => {
@@ -79,7 +77,6 @@ function Page() {
           <h1 className='font-semibold text-2xl'>Edit Profile User</h1>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
-          {/* Username */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -102,8 +99,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* Phone */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -128,7 +123,6 @@ function Page() {
               )}
             </div>
           </div>
-          {/* Email */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -149,7 +143,6 @@ function Page() {
               )}
             </div>
           </div>
-          {/* Gender */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -171,8 +164,6 @@ function Page() {
             </div>
             <div>{errors.gender && <p>{errors.gender.message}</p>}</div>
           </div>
-
-          {/* Address */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -191,8 +182,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* Pincode */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -211,8 +200,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* City */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -231,8 +218,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* Country */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -263,7 +248,7 @@ function Page() {
               type='submit'
               className='py-2 px-4 bg-green-300 border rounded-md border-gray-400 text-gray-700'
             >
-              Submit
+              Save
             </button>
           </div>
         </form>

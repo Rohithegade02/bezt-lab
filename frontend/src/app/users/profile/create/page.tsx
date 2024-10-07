@@ -16,10 +16,11 @@ function Page() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(profileSchema) })
 
+  //POST API
   const onSubmit = async (data: {
     username: string
     phone: string
-    gender: GenderEnum // Specify the expected type for gender
+    gender: GenderEnum
     email: string
     address: string
     pincode: string
@@ -27,7 +28,7 @@ function Page() {
     state: string
     country: string
   }) => {
-    const res: Response | undefined = await createProfileUser(data) // create a new user
+    const res: Response | undefined = await createProfileUser(data)
     if (res?.ok) {
       toast.success('Successfully created!')
       setTimeout(() => {
@@ -44,7 +45,6 @@ function Page() {
           <h1 className='font-semibold text-2xl'>Users Create</h1>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
-          {/* Username Field */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -67,8 +67,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* Phone Field */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -93,8 +91,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* Email Field */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -115,8 +111,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* Gender Field */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -140,8 +134,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* Address Field */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -160,8 +152,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* Pincode Field */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -180,8 +170,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* City Field */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -200,8 +188,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* State Field */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -220,8 +206,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* Country Field */}
           <div className='flex flex-col'>
             <div className='flex w-[80%]'>
               <div className='basis-[40%]'>
@@ -240,8 +224,6 @@ function Page() {
               )}
             </div>
           </div>
-
-          {/* Submit and Cancel Buttons */}
           <div className=' flex items-end justify-evenly px-8 '>
             <button
               type='reset'
@@ -253,7 +235,7 @@ function Page() {
               type='submit'
               className='py-2 px-4 bg-green-300 border rounded-md border-gray-400 text-gray-700'
             >
-              Submit
+              Save{' '}
             </button>
           </div>
         </form>
