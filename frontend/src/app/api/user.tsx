@@ -13,9 +13,7 @@ export const createUser = async (data: User) => {
       body: JSON.stringify(data),
     })
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
+    return response
   } catch (error) {
     console.error('Error:', error)
   }
@@ -43,9 +41,7 @@ export const deleteUser = async (userId: number) => {
         'Content-Type': 'application/json',
       },
     })
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
+    return response
   } catch (error) {
     console.error('Error:', error)
   }
@@ -63,9 +59,7 @@ export const updateUser = async (
       },
       body: JSON.stringify(data),
     })
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
+    return response
   } catch (error) {
     console.error('Error:', error)
   }

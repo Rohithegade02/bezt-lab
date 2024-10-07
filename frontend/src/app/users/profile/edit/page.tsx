@@ -5,9 +5,10 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { GenderEnum, Profile, User } from '@/app/types/type'
+import { GenderEnum, Profile } from '@/app/types/type'
 import { useAppSelector } from '@/app/lib/hook'
 import { updateProfileUser } from '@/app/api/profile'
+import toast, { Toaster } from 'react-hot-toast'
 
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
@@ -59,7 +60,6 @@ function Page() {
       setValue('state', userProfile.profiles[0].state)
       setValue('country', userProfile.profiles[0].country)
       setInitialUser(userProfile) // Save the initial user data for comparison
-      console.log(initialUser)
     }
   }, [userProfile, setValue])
 
@@ -81,8 +81,18 @@ function Page() {
     // Only send PATCH request if there are updated fields
     if (Object.keys(updatedData).length > 0) {
       try {
-        await updateProfileUser(initialUser.id, updatedData) // PATCH request with updated fields
-        router.push('/users') // Redirect after successful update
+        const res: Response | undefined = await updateProfileUser(
+          initialUser.id,
+          updatedData,
+        ) // PATCH request with updated fields
+        if (res?.ok) {
+          toast.success('Successfully Updated!')
+          setTimeout(() => {
+            router.push('/users')
+          }, 2000)
+        } else {
+          toast.error('Internal Server Error')
+        }
       } catch (error) {
         console.error('Failed to update user profile:', error)
       }
@@ -285,6 +295,7 @@ function Page() {
           </div>
         </form>
       </div>
+      <Toaster />
     </div>
   )
 }

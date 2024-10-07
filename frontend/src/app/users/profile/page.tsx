@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAppSelector } from '@/app/lib/hook'
 import { deleteProfileUser } from '@/app/api/profile'
+import toast, { Toaster } from 'react-hot-toast'
 
 function UserProfile() {
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
@@ -19,8 +20,12 @@ function UserProfile() {
   const handleEditProfile = useCallback(() => {
     router.push(`/users/profile/edit`)
   }, [router])
-  if (!userProfile) {
-    return <p>No profile selected.</p>
+  if (userProfile?.profiles?.length === 0) {
+    return (
+      <p className='text-white flex h-screen  items-center justify-center'>
+        Profile details are not available for this record.
+      </p>
+    )
   }
 
   return (
@@ -44,7 +49,7 @@ function UserProfile() {
               />
             </button>
             <button
-              className='text-gray-500  '
+              className='text-gray-500'
               onClick={() => setShowDeleteModal(!showDeleteModal)}
             >
               <XMarkIcon
@@ -130,9 +135,24 @@ const DeleteModal = ({
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>
   userProfileId: number
 }) => {
-  const deleteUserFunction = useCallback(async (userProfileId: number) => {
-    await deleteProfileUser(userProfileId)
-  }, [])
+  const router = useRouter()
+  const deleteUserFunction = useCallback(
+    async (userProfileId: number) => {
+      const res: Response | undefined = await deleteProfileUser(userProfileId)
+      if (res?.ok) {
+        toast.success('Deleted Successfully')
+        setTimeout(() => {
+          router.push('/users')
+        }, 2000)
+      } else {
+        toast.error('Internal Server Error')
+        setTimeout(() => {
+          setShowDeleteModal(false)
+        }, 2000)
+      }
+    },
+    [router, setShowDeleteModal],
+  )
   return (
     <div className='flex flex-col w-96 h-40 items-center justify-center gap-2 bg-yellow-200 rounded-2xl border-2 border-gray-400'>
       <div>
@@ -152,6 +172,7 @@ const DeleteModal = ({
           Yes
         </button>
       </div>
+      <Toaster />
     </div>
   )
 }

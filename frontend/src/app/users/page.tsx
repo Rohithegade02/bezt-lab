@@ -9,6 +9,7 @@ import {
   setSelectedUser,
   setSelectedProfileUser,
 } from '../lib/features/user/userSlice'
+import toast, { Toaster } from 'react-hot-toast'
 
 export default function Page() {
   const dispatch = useDispatch()
@@ -17,18 +18,18 @@ export default function Page() {
   const router = useRouter()
   const [users, setUsers] = useState<Array<User>>([])
   //get api
-  const getData = useCallback(async () => {
+  const fetchUsers = useCallback(async () => {
     const response = await getAllUser()
     setUsers(response)
   }, [])
+
   useEffect(() => {
-    getData()
-  }, [getData])
+    fetchUsers()
+  }, [fetchUsers])
 
   const allUsers = useMemo(() => users, [users])
   const handleViewProfile = useCallback(
     (userProfile: Profile) => {
-      console.log(userProfile)
       dispatch(setSelectedProfileUser(userProfile))
       router.push(`/users/profile`)
     },
@@ -73,7 +74,7 @@ export default function Page() {
               </th>
             </tr>
           </thead>
-          <tbody className=''>
+          <tbody>
             {allUsers.map(user => (
               <tr key={user.id}>
                 <td className='border text-white border-gray-300 px-4 py-2'>
@@ -82,12 +83,12 @@ export default function Page() {
                 <td className='border text-white border-gray-300 px-4 py-2'>
                   {user.phone}
                 </td>
-                <td className=''>
+                <td className='pl-4'>
                   <PencilIcon
                     height={20}
                     width={20}
                     onClick={() => handleEditUser(user)}
-                    className='mx-2 text-white cursor-pointer'
+                    className=' text-white cursor-pointer'
                   />
                 </td>
                 <td>
@@ -98,21 +99,7 @@ export default function Page() {
                     className='text-white border-2 cursor-pointer border-white rounded-full'
                   />
                 </td>
-                {showDeleteModal && (
-                  <div className='fixed inset-0 z-10 flex items-center justify-center'>
-                    <div
-                      className='absolute inset-0 bg-black opacity-40'
-                      onClick={() => setShowDeleteModal(false)}
-                    ></div>
-                    {/* Modal */}
-                    <div className='relative shadow-lg z-20'>
-                      <DeleteModal
-                        setShowDeleteModal={setShowDeleteModal}
-                        userId={user.id}
-                      />
-                    </div>{' '}
-                  </div>
-                )}
+
                 <td>
                   <button
                     className='text-blue-400'
@@ -121,6 +108,22 @@ export default function Page() {
                     View Profile
                   </button>
                 </td>
+                {showDeleteModal && (
+                  <div className='fixed inset-0 z-10 flex items-center justify-center'>
+                    <div
+                      className='absolute inset-0 bg-black opacity-20'
+                      onClick={() => setShowDeleteModal(false)}
+                    ></div>
+                    {/* Modal */}
+                    <div className='relative shadow-lg z-20'>
+                      <DeleteModal
+                        setShowDeleteModal={setShowDeleteModal}
+                        userId={user.id}
+                        fetchUsers={fetchUsers}
+                      />
+                    </div>{' '}
+                  </div>
+                )}
               </tr>
             ))}
           </tbody>
@@ -133,13 +136,31 @@ export default function Page() {
 const DeleteModal = ({
   setShowDeleteModal,
   userId,
+  fetchUsers,
 }: {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>
   userId: number | undefined
+  fetchUsers: () => Promise<void> // Function to refetch users
 }) => {
-  const deleteUserFunction = useCallback(async (userId: number) => {
-    await deleteUser(userId)
-  }, [])
+  const deleteUserFunction = useCallback(
+    async (userId: number) => {
+      const res: Response | undefined = await deleteUser(userId)
+      if (res?.ok) {
+        toast.success('Deleted Successfully')
+        await fetchUsers() // Refetch users after successful deletion
+
+        setTimeout(() => {
+          setShowDeleteModal(false)
+        }, 2000)
+      } else {
+        toast.error('Internal Server Error')
+        setTimeout(() => {
+          setShowDeleteModal(false)
+        }, 2000)
+      }
+    },
+    [fetchUsers, setShowDeleteModal],
+  )
   return (
     <div className='flex flex-col w-96 h-40 items-center justify-center gap-2 bg-yellow-200 rounded-2xl border-2 border-gray-400'>
       <div>
@@ -159,6 +180,7 @@ const DeleteModal = ({
           Yes
         </button>
       </div>
+      <Toaster />
     </div>
   )
 }

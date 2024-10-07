@@ -8,6 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { updateUser } from '@/app/api/user'
 import { User } from '@/app/types/type'
 import { useAppSelector } from '@/app/lib/hook'
+import toast, { Toaster } from 'react-hot-toast'
 
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
@@ -63,8 +64,18 @@ function Page() {
 
       if (Object.keys(updatedData).length > 0) {
         // If there are updates, send a request to update the user data
-        await updateUser(initialUser.id, updatedData)
-        router.push('/users') // Redirect to users list after updating
+        const res: Response | undefined = await updateUser(
+          initialUser.id,
+          updatedData,
+        )
+        if (res?.ok) {
+          toast.success('Successfully Updated!')
+          setTimeout(() => {
+            router.push('/users')
+          }, 2000)
+        } else {
+          toast.error('Internal Server Error')
+        }
       }
     }
   }
@@ -127,6 +138,7 @@ function Page() {
           </form>
         </div>
       </div>
+      <Toaster />
     </div>
   )
 }

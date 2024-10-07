@@ -12,10 +12,7 @@ export const createProfileUser = async (data: Profile) => {
       },
       body: JSON.stringify(data),
     })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
+    return response
   } catch (error) {
     console.error('Error:', error)
   }
@@ -43,9 +40,7 @@ export const deleteProfileUser = async (userId: number) => {
         'Content-Type': 'application/json',
       },
     })
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
+    return response
   } catch (error) {
     console.error('Error:', error)
   }
@@ -63,9 +58,7 @@ export const updateProfileUser = async (
       },
       body: JSON.stringify(data),
     })
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
+    return response
   } catch (error) {
     console.error('Error:', error)
   }

@@ -5,6 +5,8 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { GenderEnum, Profile } from '@/app/types/type'
 import { createProfileUser } from '@/app/api/profile'
+import toast, { Toaster } from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
@@ -30,6 +32,7 @@ const schema = yup
   .required()
 
 function Page() {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -37,7 +40,15 @@ function Page() {
   } = useForm({ resolver: yupResolver(schema) })
 
   const onSubmit = async (data: Profile) => {
-    await createProfileUser(data) // create a new user
+    const res: Response | undefined = await createProfileUser(data) // create a new user
+    if (res?.ok) {
+      toast.success('Successfully created!')
+      setTimeout(() => {
+        router.push('/users')
+      }, 2000)
+    } else {
+      toast.error('Internal Server Error')
+    }
   }
   return (
     <div className='flex items-center justify-center h-screen'>
@@ -260,6 +271,7 @@ function Page() {
           </div>
         </form>
       </div>
+      <Toaster />
     </div>
   )
 }
