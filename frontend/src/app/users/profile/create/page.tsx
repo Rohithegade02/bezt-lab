@@ -1,35 +1,12 @@
 'use client'
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { GenderEnum, Profile } from '@/app/types/type'
+import { GenderEnum } from '@/app/types/type'
 import { createProfileUser } from '@/app/api/profile'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
-
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-
-const schema = yup
-  .object({
-    username: yup.string().min(4),
-    phone: yup
-      .string()
-      .matches(phoneRegExp, 'Phone number is not valid')
-      .min(10)
-      .max(10),
-    gender: yup
-      .mixed()
-      .oneOf(Object.values(GenderEnum).map(e => e as GenderEnum)),
-    email: yup.string().email(),
-    address: yup.string().min(10),
-    pincode: yup.string().min(6).max(6),
-    city: yup.string(),
-    state: yup.string(),
-    country: yup.string(),
-  })
-  .required()
+import { profileSchema } from '@/app/schema/profile'
 
 function Page() {
   const router = useRouter()
@@ -37,9 +14,19 @@ function Page() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) })
+  } = useForm({ resolver: yupResolver(profileSchema) })
 
-  const onSubmit = async (data: Profile) => {
+  const onSubmit = async (data: {
+    username: string
+    phone: string
+    gender: GenderEnum // Specify the expected type for gender
+    email: string
+    address: string
+    pincode: string
+    city: string
+    state: string
+    country: string
+  }) => {
     const res: Response | undefined = await createProfileUser(data) // create a new user
     if (res?.ok) {
       toast.success('Successfully created!')

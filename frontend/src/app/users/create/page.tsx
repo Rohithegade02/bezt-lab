@@ -1,26 +1,12 @@
 'use client'
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { createUser } from '@/app/api/user'
 import { User } from '@/app/types/type'
 import toast, { Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
-
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-
-const schema = yup
-  .object({
-    username: yup.string().required().min(4),
-    phone: yup
-      .string()
-      .matches(phoneRegExp, 'Phone number is not valid')
-      .min(10)
-      .max(10),
-  })
-  .required()
+import { schema } from '@/app/schema/user'
 
 function Page() {
   const {
@@ -32,6 +18,7 @@ function Page() {
 
   const onSubmit = async (data: User) => {
     const res: Response | undefined = await createUser(data)
+    console.log(res)
     if (res?.ok) {
       toast.success('Successfully created!')
       setTimeout(() => {

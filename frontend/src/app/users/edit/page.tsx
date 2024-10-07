@@ -3,27 +3,12 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { updateUser } from '@/app/api/user'
 import { User } from '@/app/types/type'
 import { useAppSelector } from '@/app/lib/hook'
 import toast, { Toaster } from 'react-hot-toast'
-
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-
-// Yup schema validation
-const schema = yup
-  .object({
-    username: yup.string().required().min(4),
-    phone: yup
-      .string()
-      .matches(phoneRegExp, 'Phone number is not valid')
-      .min(10)
-      .max(10),
-  })
-  .required()
+import { schema } from '@/app/schema/user'
 
 function Page() {
   const router = useRouter()
@@ -51,21 +36,21 @@ function Page() {
 
   // Handle form submission
   const onSubmit = async (data: User) => {
-    const { id, profiles, ...userData } = data
-
     if (initialUser) {
       // Create an object with only updated fields
-      const updatedData = Object.keys(userData).reduce((acc, key) => {
-        if (userData[key as keyof User] !== initialUser[key as keyof User]) {
-          acc[key as keyof User] = userData[key as keyof User]
+      const updatedData = Object.keys(data).reduce((acc, key) => {
+        const typedKey = key as keyof User // Explicitly cast key to keyof User
+
+        if (data[typedKey] !== initialUser[typedKey]) {
+          acc[typedKey] = data[typedKey] // Now acc[key] can be safely assigned
         }
         return acc
-      }, {} as Partial<User>)
+      }, {} as User) // Use Partial<User> to allow for optional fields
 
       if (Object.keys(updatedData).length > 0) {
         // If there are updates, send a request to update the user data
         const res: Response | undefined = await updateUser(
-          initialUser.id,
+          initialUser.id as number,
           updatedData,
         )
         if (res?.ok) {

@@ -5,35 +5,11 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { GenderEnum, Profile } from '@/app/types/type'
+import { GenderEnum, Profile, User } from '@/app/types/type'
 import { useAppSelector } from '@/app/lib/hook'
 import { updateProfileUser } from '@/app/api/profile'
 import toast, { Toaster } from 'react-hot-toast'
-
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-
-const schema = yup
-  .object({
-    username: yup.string().min(4).required('Username is required'),
-    phone: yup
-      .string()
-      .matches(phoneRegExp, 'Phone number is not valid')
-      .min(10)
-      .max(10)
-      .required('Phone number is required'),
-    gender: yup
-      .mixed()
-      .oneOf(Object.values(GenderEnum).map(e => e as GenderEnum))
-      .required('Gender is required'),
-    email: yup.string().email().required('Email is required'),
-    address: yup.string().min(10).required('Address is required'),
-    pincode: yup.string().min(6).max(6).required('Pincode is required'),
-    city: yup.string().required('City is required'),
-    state: yup.string().required('State is required'),
-    country: yup.string().required('Country is required'),
-  })
-  .required()
+import { profileSchema } from '@/app/schema/profile'
 
 function Page() {
   const router = useRouter()
@@ -45,7 +21,7 @@ function Page() {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) })
+  } = useForm({ resolver: yupResolver(profileSchema) })
 
   // Set the values in the form when the page loads
   useEffect(() => {
@@ -64,25 +40,22 @@ function Page() {
   }, [userProfile, setValue])
 
   // Handle form submission
-  const onSubmit = async (data: Profile) => {
+  const onSubmit = async (data: Profile & User) => {
     if (!initialUser) return
 
     // Compare new data with initial data and extract only changed fields
-    const updatedData: Partial<Profile> = Object.keys(data).reduce(
-      (acc, key) => {
-        if (data[key as keyof Profile] !== initialUser[key as keyof Profile]) {
-          acc[key as keyof Profile] = data[key as keyof Profile]
-        }
-        return acc
-      },
-      {} as Partial<Profile>,
-    )
+    const updatedData: Profile & User = Object.keys(data).reduce((acc, key) => {
+      if (data[key as keyof Profile] !== initialUser[key as keyof Profile]) {
+        acc[key as keyof Profile] = data[key as keyof Profile]
+      }
+      return acc
+    }, {} as Profile & User)
 
     // Only send PATCH request if there are updated fields
     if (Object.keys(updatedData).length > 0) {
       try {
         const res: Response | undefined = await updateProfileUser(
-          initialUser.id,
+          initialUser.id as number,
           updatedData,
         ) // PATCH request with updated fields
         if (res?.ok) {

@@ -2,6 +2,7 @@ export interface User {
   id?: number
   username: string
   phone: string
+  profiles?: Profile[]
 }
 export enum GenderEnum {
   female = 'FEMALE',

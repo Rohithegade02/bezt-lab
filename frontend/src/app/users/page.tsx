@@ -14,10 +14,12 @@ import toast, { Toaster } from 'react-hot-toast'
 export default function Page() {
   const dispatch = useDispatch()
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null) // Track selected user
 
   const router = useRouter()
   const [users, setUsers] = useState<Array<User>>([])
-  //get api
+
+  // Get API data
   const fetchUsers = useCallback(async () => {
     const response = await getAllUser()
     setUsers(response)
@@ -28,6 +30,7 @@ export default function Page() {
   }, [fetchUsers])
 
   const allUsers = useMemo(() => users, [users])
+
   const handleViewProfile = useCallback(
     (userProfile: Profile) => {
       dispatch(setSelectedProfileUser(userProfile))
@@ -39,6 +42,7 @@ export default function Page() {
   const handleCreateUser = useCallback(() => {
     router.push('/users/create')
   }, [router])
+
   const handleEditUser = useCallback(
     (user: User) => {
       dispatch(setSelectedUser(user)) // Set user in the global state
@@ -46,6 +50,12 @@ export default function Page() {
     },
     [dispatch, router],
   )
+
+  // Open delete modal for a specific user
+  const handleDeleteUser = useCallback((userId: number) => {
+    setSelectedUserId(userId)
+    setShowDeleteModal(true)
+  }, [])
 
   return (
     <React.Fragment>
@@ -95,40 +105,44 @@ export default function Page() {
                   <XMarkIcon
                     height={20}
                     width={20}
-                    onClick={() => setShowDeleteModal(!showDeleteModal)}
+                    onClick={() => handleDeleteUser(user.id as number)} // Set userId for deletion
                     className='text-white border-2 cursor-pointer border-white rounded-full'
                   />
                 </td>
 
                 <td>
-                  <button
-                    className='text-blue-400'
-                    onClick={() => handleViewProfile(user)}
-                  >
-                    View Profile
-                  </button>
+                  {user?.profiles?.length !== 0 && (
+                    <button
+                      className='text-blue-400'
+                      onClick={() => handleViewProfile(user as Profile)}
+                    >
+                      View Profile
+                    </button>
+                  )}
                 </td>
-                {showDeleteModal && (
-                  <div className='fixed inset-0 z-10 flex items-center justify-center'>
-                    <div
-                      className='absolute inset-0 bg-black opacity-20'
-                      onClick={() => setShowDeleteModal(false)}
-                    ></div>
-                    {/* Modal */}
-                    <div className='relative shadow-lg z-20'>
-                      <DeleteModal
-                        setShowDeleteModal={setShowDeleteModal}
-                        userId={user.id}
-                        fetchUsers={fetchUsers}
-                      />
-                    </div>{' '}
-                  </div>
-                )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* Modal only shown when a user is selected */}
+      {showDeleteModal && selectedUserId !== null && (
+        <div className='fixed inset-0 z-10 flex items-center justify-center'>
+          <div
+            className='absolute inset-0 bg-black opacity-50'
+            onClick={() => setShowDeleteModal(false)}
+          ></div>
+          {/* Modal */}
+          <div className='relative shadow-lg z-20'>
+            <DeleteModal
+              setShowDeleteModal={setShowDeleteModal}
+              userId={selectedUserId} // Pass selected user ID to modal
+              fetchUsers={fetchUsers}
+            />
+          </div>
+        </div>
+      )}
     </React.Fragment>
   )
 }
@@ -139,16 +153,16 @@ const DeleteModal = ({
   fetchUsers,
 }: {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>
-  userId: number | undefined
+  userId: number
   fetchUsers: () => Promise<void> // Function to refetch users
 }) => {
+  console.log(userId)
   const deleteUserFunction = useCallback(
     async (userId: number) => {
       const res: Response | undefined = await deleteUser(userId)
       if (res?.ok) {
         toast.success('Deleted Successfully')
         await fetchUsers() // Refetch users after successful deletion
-
         setTimeout(() => {
           setShowDeleteModal(false)
         }, 2000)
@@ -161,6 +175,7 @@ const DeleteModal = ({
     },
     [fetchUsers, setShowDeleteModal],
   )
+
   return (
     <div className='flex flex-col w-96 h-40 items-center justify-center gap-2 bg-yellow-200 rounded-2xl border-2 border-gray-400'>
       <div>
