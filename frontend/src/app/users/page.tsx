@@ -42,7 +42,9 @@ export default function Page() {
   const handleCreateUser = useCallback(() => {
     router.push('/users/create')
   }, [router])
-
+  const handleCreateProfileUser = useCallback(() => {
+    router.push('/users/profile/create')
+  }, [router])
   const handleEditUser = useCallback(
     (user: User) => {
       dispatch(setSelectedUser(user))
@@ -62,12 +64,18 @@ export default function Page() {
         <div>
           <p>Users</p>
         </div>
-        <div>
+        <div className='flex gap-5 items-center'>
           <button
             className='py-2 px-5 border-2 border-black rounded-md bg-blue-400 text-white'
-            onClick={() => handleCreateUser()}
+            onClick={handleCreateUser}
           >
             Create User
+          </button>
+          <button
+            className='py-2 px-5 border-2 border-black rounded-md bg-blue-400 text-white'
+            onClick={handleCreateProfileUser}
+          >
+            Create Profile User
           </button>
         </div>
       </div>

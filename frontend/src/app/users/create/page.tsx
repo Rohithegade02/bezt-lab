@@ -31,7 +31,7 @@ function Page() {
     <div className='flex justify-center items-center h-screen '>
       <div className='flex lg:w-[30%] w-[70%] py-5 flex-col gap-5 bg-white items-center rounded-lg justify-center '>
         <div>
-          <h1 className='font-semibold text-2xl'>Users Create </h1>
+          <h1 className='font-semibold text-2xl'>User Create </h1>
         </div>
         <div>
           <form

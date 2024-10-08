@@ -42,7 +42,7 @@ function Page() {
     <div className='flex items-center justify-center h-screen'>
       <div className='flex gap-5 lg:w-[30%] w-[90%] bg-white p-8 flex-col  rounded-lg  '>
         <div>
-          <h1 className='font-semibold text-2xl'>Users Create</h1>
+          <h1 className='font-semibold text-2xl'>User Profile Create</h1>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
           <div className='flex flex-col'>
