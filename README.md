@@ -19,6 +19,7 @@ This repository contains two separate projects: **Backend** and **Frontend**, bo
 - 🖐️ **CRUD operations** for managing `Users` and `Profiles`.
 - 🖐️ **NestJS** for building scalable and efficient server-side applications.
 - 🖐️ **Prisma ORM** for easy database handling with **PostgreSQL**.
+- 🖐️ Unique constraints on username and email to ensure data integrity.
 - 🖐️ Endpoints to handle:
   - Create, Read, Update, Delete users and their associated profiles.
   
