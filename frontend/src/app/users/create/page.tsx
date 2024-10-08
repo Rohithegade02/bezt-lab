@@ -15,7 +15,8 @@ function Page() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
   const router = useRouter()
-  //POST API
+
+  // POST API
   const onSubmit = async (data: User) => {
     const res: Response | undefined = await createUser(data)
     if (res?.ok) {
@@ -27,45 +28,51 @@ function Page() {
       toast.error('Internal Server Error')
     }
   }
+
   return (
-    <div className='flex justify-center items-center h-screen '>
-      <div className='flex lg:w-[30%] w-[70%] py-5 flex-col gap-5 bg-white items-center rounded-lg justify-center '>
+    <div className='flex justify-center items-center h-screen'>
+      <div className='flex lg:w-[30%] w-[70%] py-5 flex-col gap-5 bg-white items-center rounded-lg justify-center'>
         <div>
-          <h1 className='font-semibold text-2xl'>User Create </h1>
+          <h1 className='font-semibold text-2xl'>User Create</h1>
         </div>
         <div>
           <form
             onSubmit={handleSubmit(onSubmit)}
             className='flex flex-col gap-5'
           >
-            <div className='flex flex-col '>
+            <div className='flex flex-col'>
               <div className='flex justify-between'>
-                <label className=''>UserName </label>
+                <label>UserName</label>
                 <input
-                  //   onFocus={errors.username?.message?.length < 1}
-                  className='border border-black  rounded-md'
+                  className={`border rounded-md ${
+                    errors.username ? 'border-red-500' : 'border-black'
+                  }`}
                   {...register('username', {
                     required: 'Username is required',
                   })}
                 />
               </div>
               <div>
-                {' '}
                 {errors.username && (
                   <p className='text-red-400 text-sm'>
                     {errors.username.message}
                   </p>
                 )}
-              </div>{' '}
+              </div>
             </div>
             <div className='flex flex-col'>
               <div className='flex gap-10'>
                 <label>Phone</label>
                 <input
-                  className='border border-black  rounded-md'
+                  className={`border rounded-md ${
+                    errors.phone ? 'border-red-500' : 'border-black'
+                  }`}
                   {...register('phone', {
                     required: 'Phone number is required',
-                    minLength: 10,
+                    minLength: {
+                      value: 10,
+                      message: 'Phone number must be at least 10 digits',
+                    },
                   })}
                 />
               </div>

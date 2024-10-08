@@ -16,7 +16,7 @@ function Page() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(profileSchema) })
 
-  //POST API
+  // POST API
   const onSubmit = async (data: {
     username: string
     phone: string
@@ -38,9 +38,10 @@ function Page() {
       toast.error('Internal Server Error')
     }
   }
+
   return (
     <div className='flex items-center justify-center h-screen'>
-      <div className='flex gap-5 lg:w-[30%] w-[90%] bg-white p-8 flex-col  rounded-lg  '>
+      <div className='flex gap-5 lg:w-[30%] w-[90%] bg-white p-8 flex-col rounded-lg'>
         <div>
           <h1 className='font-semibold text-2xl'>User Profile Create</h1>
         </div>
@@ -52,7 +53,9 @@ function Page() {
               </div>
               <div className='basis-[100%]'>
                 <input
-                  className='w-full border border-black rounded-md'
+                  className={`w-full border rounded-md ${
+                    errors.username ? 'border-red-500' : 'border-black'
+                  }`}
                   {...register('username', {
                     required: 'Username is required',
                   })}
@@ -74,7 +77,9 @@ function Page() {
               </div>
               <div className='basis-[100%]'>
                 <input
-                  className='w-full border border-black rounded-md'
+                  className={`w-full border rounded-md ${
+                    errors.phone ? 'border-red-500' : 'border-black'
+                  }`}
                   {...register('phone', {
                     required: 'Phone number is required',
                     minLength: {
@@ -98,7 +103,9 @@ function Page() {
               </div>
               <div className='basis-[100%]'>
                 <input
-                  className='w-full border border-black rounded-md'
+                  className={`w-full border rounded-md ${
+                    errors.email ? 'border-red-500' : 'border-black'
+                  }`}
                   {...register('email', {
                     required: 'Email is required',
                   })}
@@ -118,7 +125,9 @@ function Page() {
               </div>
               <div className='basis-[100%]'>
                 <select
-                  className='w-full border border-black rounded-md'
+                  className={`w-full border rounded-md ${
+                    errors.gender ? 'border-red-500' : 'border-black'
+                  }`}
                   {...register('gender', { required: 'Gender is required' })}
                 >
                   <option value=''>Select Gender</option>
@@ -130,7 +139,9 @@ function Page() {
             </div>
             <div>
               {errors.gender && (
-                <p className='text-red-400 text-sm'>{errors.gender.message}</p>
+                <p className='text-red-400 text-[12px]'>
+                  {errors.gender.message}
+                </p>
               )}
             </div>
           </div>
@@ -141,7 +152,9 @@ function Page() {
               </div>
               <div className='basis-[100%]'>
                 <input
-                  className='w-full border border-black rounded-md'
+                  className={`w-full border rounded-md ${
+                    errors.address ? 'border-red-500' : 'border-black'
+                  }`}
                   {...register('address', { required: 'Address is required' })}
                 />
               </div>
@@ -159,7 +172,9 @@ function Page() {
               </div>
               <div className='basis-[100%]'>
                 <input
-                  className='w-full border border-black rounded-md'
+                  className={`w-full border rounded-md ${
+                    errors.pincode ? 'border-red-500' : 'border-black'
+                  }`}
                   {...register('pincode', { required: 'Pincode is required' })}
                 />
               </div>
@@ -177,7 +192,9 @@ function Page() {
               </div>
               <div className='basis-[100%]'>
                 <input
-                  className='w-full border border-black rounded-md'
+                  className={`w-full border rounded-md ${
+                    errors.city ? 'border-red-500' : 'border-black'
+                  }`}
                   {...register('city', { required: 'City is required' })}
                 />
               </div>
@@ -195,7 +212,9 @@ function Page() {
               </div>
               <div className='basis-[100%]'>
                 <input
-                  className='w-full border border-black rounded-md'
+                  className={`w-full border rounded-md ${
+                    errors.state ? 'border-red-500' : 'border-black'
+                  }`}
                   {...register('state', { required: 'State is required' })}
                 />
               </div>
@@ -213,7 +232,9 @@ function Page() {
               </div>
               <div className='basis-[100%]'>
                 <input
-                  className='w-full border border-black rounded-md'
+                  className={`w-full border rounded-md ${
+                    errors.country ? 'border-red-500' : 'border-black'
+                  }`}
                   {...register('country', { required: 'Country is required' })}
                 />
               </div>
@@ -224,7 +245,7 @@ function Page() {
               )}
             </div>
           </div>
-          <div className=' flex items-end justify-evenly px-8 '>
+          <div className='flex items-end justify-evenly px-8'>
             <button
               type='reset'
               className='py-2 px-4 bg-white border rounded-md border-gray-400 text-gray-700'
@@ -235,7 +256,7 @@ function Page() {
               type='submit'
               className='py-2 px-4 bg-green-300 border rounded-md border-gray-400 text-gray-700'
             >
-              Save{' '}
+              Save
             </button>
           </div>
         </form>
